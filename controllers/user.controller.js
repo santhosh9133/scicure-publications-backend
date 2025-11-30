@@ -12,7 +12,7 @@ const generateToken = (user) => {
 exports.registerUser = async (req, res) => {
   try {
     const { userName, email, password, mobile, role } = req.body;
-    const profilePic = req.file ? `/uploads/${req.file.filename}` : "";
+    const journalImage = req.file ? `/uploads/${req.file.filename}` : "";
 
     const existingUser = await User.findOne({ email });
     if (existingUser)
@@ -24,7 +24,7 @@ exports.registerUser = async (req, res) => {
       password,
       mobile,
       role,
-      profilePic,
+      journalImage,
     });
 
     await user.save();
@@ -37,7 +37,7 @@ exports.registerUser = async (req, res) => {
         id: user._id,
         userName: user.userName,
         email: user.email,
-        profilePic: user.profilePic,
+        journalImage: user.journalImage,
         role: user.role,
         token,
       },
@@ -68,7 +68,7 @@ exports.loginUser = async (req, res) => {
         id: user._id,
         userName: user.userName,
         email: user.email,
-        profilePic: user.profilePic,
+        journalImage: user.journalImage,
         role: user.role,
         token,
       },
@@ -83,7 +83,7 @@ exports.createUser = async (req, res) => {
   try {
     const { userName, email, password, mobile, role } = req.body;
 
-    const profilePic = req.file ? req.file.filename : "";
+    const journalImage = req.file ? req.file.filename : "";
 
     const user = new User({
       userName,
@@ -91,7 +91,7 @@ exports.createUser = async (req, res) => {
       password,
       mobile,
       role,
-      profilePic,
+      journalImage,
     });
 
     await user.save();
@@ -109,7 +109,7 @@ exports.createUser = async (req, res) => {
 // Get All Users
 exports.getUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find({ role: { $ne: "admin" } });
 
     return res.status(200).json({
       success: true,
@@ -142,7 +142,20 @@ exports.getUserById = async (req, res) => {
 // Update User (with optional image)
 exports.updateUser = async (req, res) => {
   try {
-    const { userName, email, password, mobile, role } = req.body;
+    const {
+      userName,
+      email,
+      password,
+      mobile,
+      role,
+      journalImage,
+      journalName,
+      journalTitle,
+      journalISSN,
+      journalCategory,
+      journalDescription,
+      status,
+    } = req.body;
 
     const updateData = {
       userName,
@@ -150,10 +163,17 @@ exports.updateUser = async (req, res) => {
       password,
       mobile,
       role,
+      journalImage,
+      journalName,
+      journalTitle,
+      journalISSN,
+      journalCategory,
+      journalDescription,
+      status,
     };
 
     if (req.file) {
-      updateData.profilePic = req.file.filename;
+      updateData.journalImage = req.file.filename;
     }
 
     const user = await User.findByIdAndUpdate(

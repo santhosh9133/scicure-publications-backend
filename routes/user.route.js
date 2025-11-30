@@ -15,7 +15,11 @@ router.post(
 router.post("/login", userController.loginUser);
 
 // Create user (form-data + image upload)
-router.post("/create", upload.single("profilePic"), userController.createUser);
+router.post(
+  "/create",
+  upload.single("journalImage"),
+  userController.createUser
+);
 
 // Get all users
 router.get("/", userController.getUsers);
@@ -26,7 +30,7 @@ router.get("/:id", userController.getUserById);
 // Update user (with optional new image)
 router.put(
   "/update/:id",
-  upload.single("profilePic"),
+  upload.single("journalImage"),
   userController.updateUser
 );
 
