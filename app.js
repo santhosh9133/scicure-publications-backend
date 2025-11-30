@@ -5,11 +5,11 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
 
-var indexRouter = require("./routes/index");
+// var indexRouter = require("./routes/index");
 let userRouter = require("./routes/user.route");
+const articleRoutes = require("./routes/articleRoutes");
 
 let mongoose = require("./db/db");
-
 require("dotenv").config();
 const PORT = process.env.PORT;
 
@@ -36,8 +36,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/", indexRouter);
+// app.use("/", indexRouter);
 app.use("/api/users", userRouter);
+app.use("/api/articles", articleRoutes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
