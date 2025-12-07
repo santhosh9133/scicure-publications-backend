@@ -120,6 +120,23 @@ exports.getUsers = async (req, res) => {
   }
 };
 
+// Get users for web
+exports.getWebUsers = async (req, res) => {
+  try {
+    const users = await User.find(
+      { role: { $ne: "admin" } },
+      "_id journalTitle"
+    );
+
+    return res.status(200).json({
+      success: true,
+      data: users,
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 // Get Single User
 exports.getUserById = async (req, res) => {
   try {

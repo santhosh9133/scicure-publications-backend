@@ -91,7 +91,7 @@ const articleSchema = new mongoose.Schema(
       // required: true,
     },
 
-    articleFile: {
+    manuscriptFile: {
       type: String, // File path
       required: true,
     },

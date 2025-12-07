@@ -27,6 +27,9 @@ router.post(
 // Get all users
 router.get("/", verifyAdminToken, userController.getUsers);
 
+// Get Users for Web
+router.get("/web", userController.getWebUsers);
+
 // Get single user
 router.get("/:id", verifyAdminToken, userController.getUserById);
 
