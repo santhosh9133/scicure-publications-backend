@@ -7,11 +7,11 @@ const User = require("../models/userModel");
 
 exports.createArticle = async (req, res) => {
   try {
-    const manuscriptFile = req.files?.manuscriptFile?.[0]?.filename || "";
+    const articleFile = req.files?.articleFile?.[0]?.filename || "";
     const coverImage = req.files?.coverImage?.[0]?.filename || "";
 
-    if (!manuscriptFile) {
-      return res.status(400).json({ message: "Manuscript file is required" });
+    if (!articleFile) {
+      return res.status(400).json({ message: "Article file is required" });
     }
 
     // Get journal (stored in user model)
@@ -34,7 +34,7 @@ exports.createArticle = async (req, res) => {
       publicationDate: req.body.publicationDate,
       volumeNumber: req.body.volumeNumber,
       issueNumber: req.body.issueNumber,
-      manuscriptFile,
+      articleFile,
       coverImage,
       articleStatus: req.body.articleStatus,
       publisherName: req.body.publisherName,
@@ -94,12 +94,12 @@ exports.updateArticle = async (req, res) => {
   try {
     let updateData = { ...req.body };
 
-    if (req.files?.manuscriptFile) {
-      updateData.manuscriptFile = req.files.manuscriptFile[0].path;
+    if (req.files?.articleFile) {
+      updateData.articleFile = req.files.articleFile[0].filename;
     }
 
     if (req.files?.coverImage) {
-      updateData.coverImage = req.files.coverImage[0].path;
+      updateData.coverImage = req.files.coverImage[0].filename;
     }
 
     // If journal updated, update shortname also
