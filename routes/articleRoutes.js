@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const articleController = require("../controllers/articleController");
 const upload = require("../middleware/uploadMiddleware"); // multer instance
+const { verifyAdminToken } = require("../middleware/verifyToken");
 
 // Declare fields using a new variable name
 const uploadFields = upload.fields([
@@ -10,10 +11,20 @@ const uploadFields = upload.fields([
 ]);
 
 // Routes
-router.post("/", uploadFields, articleController.createArticle);
-router.get("/", articleController.getAllArticles);
-router.get("/:id", articleController.getArticleById);
-router.put("/:id", uploadFields, articleController.updateArticle);
-router.delete("/:id", articleController.deleteArticle);
+router.post(
+  "/",
+  verifyAdminToken,
+  uploadFields,
+  articleController.createArticle
+);
+router.get("/", verifyAdminToken, articleController.getAllArticles);
+router.get("/:id", verifyAdminToken, articleController.getArticleById);
+router.put(
+  "/:id",
+  verifyAdminToken,
+  uploadFields,
+  articleController.updateArticle
+);
+router.delete("/:id", verifyAdminToken, articleController.deleteArticle);
 
 module.exports = router;

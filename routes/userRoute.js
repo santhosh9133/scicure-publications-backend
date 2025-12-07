@@ -9,6 +9,7 @@ const userController = require("../controllers/userController");
 router.post(
   "/register",
   upload.single("profilePic"),
+  verifyAdminToken,
   userController.registerUser
 );
 
@@ -33,6 +34,7 @@ router.get("/:id", verifyAdminToken, userController.getUserById);
 router.put(
   "/update/:id",
   upload.single("journalImage"),
+  verifyAdminToken,
   userController.updateUser
 );
 
