@@ -8,7 +8,7 @@ exports.createManuscript = async (req, res) => {
       email,
       postalAddress,
       country,
-      journalName,
+      journalId,
       articleType,
       menuscriptTitle,
       abstract,
@@ -23,7 +23,7 @@ exports.createManuscript = async (req, res) => {
       email,
       postalAddress,
       country,
-      journalName,
+      journalId,
       articleType,
       menuscriptTitle,
       abstract,
@@ -48,7 +48,10 @@ exports.createManuscript = async (req, res) => {
 // GET all manuscripts
 exports.getAllManuscripts = async (req, res) => {
   try {
-    const manuscripts = await Manuscript.find();
+    const manuscripts = await Manuscript.find().populate(
+      "journalId",
+      "journalId journalName"
+    );
     res.status(200).json(manuscripts);
   } catch (error) {
     console.error("Error fetching manuscripts:", error);
@@ -59,7 +62,10 @@ exports.getAllManuscripts = async (req, res) => {
 // GET manuscript by ID
 exports.getManuscriptById = async (req, res) => {
   try {
-    const manuscript = await Manuscript.findById(req.params.id);
+    const manuscript = await Manuscript.findById(req.params.id).populate(
+      "journalId",
+      "journalId journalName"
+    );
 
     if (!manuscript) {
       return res.status(404).json({ message: "Manuscript not found" });

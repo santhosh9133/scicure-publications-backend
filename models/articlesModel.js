@@ -18,14 +18,10 @@ const articleSchema = new mongoose.Schema(
     },
 
     // Journal Reference (Dropdown)
-    journalName: {
-      type: String,
+    journalId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
-    },
-
-    // Journal Shortname (Auto-filled)
-    journalShortname: {
-      type: String,
     },
 
     authorName: {

@@ -24,9 +24,9 @@ const manuscriptSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    journalName: {
-      type: String,
-      ref: "Journal",
+    journalId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", // Assuming you already have a Journal model
       required: true,
     },
     articleType: {

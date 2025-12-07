@@ -1,5 +1,5 @@
 const Article = require("../models/articlesModel");
-const Journal = require("../models/userModel");
+const User = require("../models/userModel");
 
 // ===============================
 // CREATE ARTICLE
@@ -14,16 +14,15 @@ exports.createArticle = async (req, res) => {
       return res.status(400).json({ message: "Manuscript file is required" });
     }
 
-    // Get journal shortname
-    const journal = await Journal.findById(req.body.journalName);
+    // Get journal (stored in user model)
+    const journal = await User.findById(req.body.journalId);
     if (!journal) {
-      return res.status(404).json({ message: "Journal not found" });
+      return res.status(404).json({ message: "Journal (User) not found" });
     }
 
     const newArticle = new Article({
       articleTitle: req.body.articleTitle,
-      journalName: req.body.journalName,
-      journalShortname: journal.journalShortname,
+      journalId: req.body.journalId, // this is User ID
       authorName: req.body.authorName,
       authorEmail: req.body.authorEmail,
       articleType: req.body.articleType,
@@ -35,7 +34,6 @@ exports.createArticle = async (req, res) => {
       publicationDate: req.body.publicationDate,
       volumeNumber: req.body.volumeNumber,
       issueNumber: req.body.issueNumber,
-      pageRange: req.body.pageRange,
       manuscriptFile,
       coverImage,
       articleStatus: req.body.articleStatus,
@@ -58,7 +56,11 @@ exports.createArticle = async (req, res) => {
 // ===============================
 exports.getAllArticles = async (req, res) => {
   try {
-    const articles = await Article.find().populate("journalName");
+    const articles = await Article.find().populate(
+      "journalId",
+      "journalId journalName" // whatever fields your User model has
+    );
+
     res.status(200).json(articles);
   } catch (error) {
     res.status(500).json({ message: "Error fetching articles", error });
@@ -71,7 +73,8 @@ exports.getAllArticles = async (req, res) => {
 exports.getArticleById = async (req, res) => {
   try {
     const article = await Article.findById(req.params.id).populate(
-      "journalName"
+      "journalId",
+      "journalId journalName" // use fields from User model
     );
 
     if (!article) {
