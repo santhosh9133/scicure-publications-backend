@@ -81,7 +81,17 @@ exports.loginUser = async (req, res) => {
 // Create User (with image upload)
 exports.createUser = async (req, res) => {
   try {
-    const { userName, email, password, mobile, role } = req.body;
+    const {
+      userName,
+      email,
+      password,
+      mobile,
+      role,
+      journalName,
+      journalTitle,
+      journalISSN,
+      journalDescription,
+    } = req.body;
 
     const journalImage = req.file ? req.file.filename : "";
 
@@ -91,6 +101,10 @@ exports.createUser = async (req, res) => {
       password,
       mobile,
       role,
+      journalName,
+      journalTitle,
+      journalISSN,
+      journalDescription,
       journalImage,
     });
 
