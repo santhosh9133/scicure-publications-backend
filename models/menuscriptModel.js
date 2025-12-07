@@ -15,6 +15,10 @@ const manuscriptSchema = new mongoose.Schema(
       trim: true,
       match: [/^\S+@\S+\.\S+$/, "Please enter a valid email"],
     },
+    mobile: {
+      type: String,
+      required: true,
+    },
     postalAddress: {
       type: String,
       required: true,

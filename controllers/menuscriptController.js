@@ -6,6 +6,7 @@ exports.createManuscript = async (req, res) => {
     const {
       authorName,
       email,
+      mobile,
       postalAddress,
       country,
       journalId,
@@ -21,6 +22,7 @@ exports.createManuscript = async (req, res) => {
     const manuscript = new Manuscript({
       authorName,
       email,
+      mobile,
       postalAddress,
       country,
       journalId,

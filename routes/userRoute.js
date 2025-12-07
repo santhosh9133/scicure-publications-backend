@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const upload = require("../middleware/uploadMiddleware"); // your image upload middleware
+const { verifyAdminToken } = require("");
 const userController = require("../controllers/userController");
 
 // REGISTER
