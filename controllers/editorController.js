@@ -1,4 +1,5 @@
 const Editor = require("../models/editorModel");
+const User = require("../models/userModel");
 
 // ===============================
 // CREATE EDITOR
@@ -33,7 +34,10 @@ exports.createEditor = async (req, res) => {
 // ===============================
 exports.getAllEditors = async (req, res) => {
   try {
-    const editors = await Editor.find();
+    const editors = await Editor.find().populate(
+      "journalId",
+      "journalName journalId"
+    );
 
     res.status(200).json(editors);
   } catch (error) {
