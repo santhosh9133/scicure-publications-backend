@@ -55,4 +55,11 @@ app.use(function (err, req, res, next) {
   res.json({ error: err.message || "Internal Server Error" });
 });
 
+// ✅ Add server listen here
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
 module.exports = app;
