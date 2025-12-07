@@ -5,7 +5,6 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
 
-// var indexRouter = require("./routes/index");
 let userRouter = require("./routes/userRoute");
 const articleRoutes = require("./routes/articleRoutes");
 const editorRoutes = require("./routes/editorRoutes");
@@ -55,4 +54,5 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.json({ error: err.message || "Internal Server Error" });
 });
+
 module.exports = app;
