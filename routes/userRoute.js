@@ -9,12 +9,11 @@ const userController = require("../controllers/userController");
 router.post(
   "/register",
   upload.single("profilePic"),
-  verifyAdminToken,
   userController.registerUser
 );
 
 // LOGIN
-router.post("/login", verifyAdminToken, userController.loginUser);
+router.post("/login", userController.loginUser);
 
 // Create user (form-data + image upload)
 router.post(
