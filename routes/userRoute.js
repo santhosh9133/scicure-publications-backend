@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const upload = require("../middleware/uploadMiddleware"); // your image upload middleware
-const userController = require("../controllers/user.controller");
+const userController = require("../controllers/userController");
 
 // REGISTER
 router.post(

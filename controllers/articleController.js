@@ -1,5 +1,5 @@
 const Article = require("../models/articlesModel");
-const Journal = require("../models/user.model");
+const Journal = require("../models/userModel");
 
 // ===============================
 // CREATE ARTICLE

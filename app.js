@@ -6,22 +6,23 @@ var logger = require("morgan");
 var cors = require("cors");
 
 // var indexRouter = require("./routes/index");
-let userRouter = require("./routes/user.route");
+let userRouter = require("./routes/userRoute");
 const articleRoutes = require("./routes/articleRoutes");
+const editorRoutes = require("./routes/editorRoutes");
+const menuscriptRoutes = require("./routes/menuscriptRoutes");
 
 let mongoose = require("./db/db");
 require("dotenv").config();
-const PORT = process.env.PORT;
 
 var app = express();
 
 // CORS configuration
 app.use(
   cors({
-    origin: "*", // allow all origins
+    origin: "*",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: false, // set true only if you need cookies/auth headers
+    credentials: false,
     optionsSuccessStatus: 200,
   })
 );
@@ -36,9 +37,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-// app.use("/", indexRouter);
 app.use("/api/users", userRouter);
 app.use("/api/articles", articleRoutes);
+app.use("/api/editors", editorRoutes);
+app.use("/api/menuscripts", menuscriptRoutes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -47,16 +49,10 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
-  // render the error page
   res.status(err.status || 500);
   res.json({ error: err.message || "Internal Server Error" });
 });
-app.listen(PORT, () => {
-  console.log(`server started at port ${PORT}`);
-});
-
 module.exports = app;
