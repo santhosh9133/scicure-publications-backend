@@ -21,7 +21,7 @@ const userSchema = new Schema(
     journalCategory: {
       type: String,
       default: "Medical",
-      enum: ["Science", "Medical", "Engineering"],
+      enum: ["Science", "Medical", "Engineering, Other"],
     },
     journalDescription: { type: String, default: "" },
     status: { type: String, default: "active", enum: ["active", "inactive"] },

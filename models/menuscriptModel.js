@@ -17,7 +17,7 @@ const manuscriptSchema = new mongoose.Schema(
     },
     mobile: {
       type: String,
-      required: true,
+      // required: true,
     },
     postalAddress: {
       type: String,

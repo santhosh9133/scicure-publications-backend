@@ -9,6 +9,7 @@ let userRouter = require("./routes/userRoute");
 const articleRoutes = require("./routes/articleRoutes");
 const editorRoutes = require("./routes/editorRoutes");
 const menuscriptRoutes = require("./routes/menuscriptRoutes");
+const messageRoutes = require("./routes/messageRoutes");
 
 let mongoose = require("./db/db");
 require("dotenv").config();
@@ -35,11 +36,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api/users", userRouter);
 app.use("/api/articles", articleRoutes);
 app.use("/api/editors", editorRoutes);
 app.use("/api/manuscripts", menuscriptRoutes);
+app.use("/api/messages", messageRoutes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

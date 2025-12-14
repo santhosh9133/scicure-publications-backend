@@ -30,6 +30,9 @@ router.get("/", verifyAdminToken, userController.getUsers);
 // Get Users for Web
 router.get("/web", userController.getWebUsers);
 
+// Get Single User for Web
+router.get("/web/:id", userController.getWebUserById);
+
 // Get single user
 router.get("/:id", verifyAdminToken, userController.getUserById);
 
