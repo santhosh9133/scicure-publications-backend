@@ -149,7 +149,7 @@ exports.getWebUsers = async (req, res) => {
   try {
     const users = await User.find(
       { role: { $ne: "admin" } },
-      "_id journalId journalName journalTitle journalISSN journalDescription journalImage status"
+      "_id journalId journalName journalTitle journalISSN journalDescription journalImage journalBgImage status"
     );
 
     return res.status(200).json({
@@ -170,7 +170,7 @@ exports.getWebUserById = async (req, res) => {
     // 1️⃣ Get Journal (User)
     const user = await User.findById(
       id,
-      "_id journalId journalName journalTitle journalISSN journalDescription journalImage status acronym"
+      "_id journalId journalName journalTitle journalISSN journalDescription journalImage journalBgImage status acronym"
     );
 
     if (!user) {
