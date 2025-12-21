@@ -1,9 +1,6 @@
 const Article = require("../models/articlesModel");
 const User = require("../models/userModel");
-
-// ===============================
-// CREATE ARTICLE
-// ===============================
+const Issue = require("../models/issueModel");
 
 exports.createArticle = async (req, res) => {
   try {
@@ -14,7 +11,20 @@ exports.createArticle = async (req, res) => {
       return res.status(400).json({ message: "Manuscript file is required" });
     }
 
-    // Get journal (stored in user model)
+    const { issueId } = req.body;
+
+    // ✅ Validate issueId
+    if (!issueId) {
+      return res.status(400).json({ message: "Issue ID is required" });
+    }
+
+    // ✅ Check Issue exists
+    const issueExists = await Issue.findById(issueId);
+    if (!issueExists) {
+      return res.status(404).json({ message: "Issue not found" });
+    }
+
+    // ✅ Validate Journal (User)
     const journal = await User.findById(req.body.journalId);
     if (!journal) {
       return res.status(404).json({ message: "Journal (User) not found" });
@@ -22,7 +32,7 @@ exports.createArticle = async (req, res) => {
 
     const newArticle = new Article({
       articleTitle: req.body.articleTitle,
-      journalId: req.body.journalId, // this is User ID
+      journalId: req.body.journalId,
       authorName: req.body.authorName,
       authorEmail: req.body.authorEmail,
       articleType: req.body.articleType,
@@ -32,8 +42,8 @@ exports.createArticle = async (req, res) => {
       submissionDate: req.body.submissionDate,
       acceptanceDate: req.body.acceptanceDate,
       publicationDate: req.body.publicationDate,
-      volumeNumber: req.body.volumeNumber,
-      issueNumber: req.body.issueNumber,
+      issueId: issueId, // ✅ FIXED
+      pageRange: req.body.pageRange,
       manuscriptFile,
       coverImage,
       articleStatus: req.body.articleStatus,
@@ -47,7 +57,12 @@ exports.createArticle = async (req, res) => {
       article: newArticle,
     });
   } catch (error) {
-    res.status(500).json({ message: "Error creating article", error });
+    console.error("CREATE ARTICLE ERROR:", error);
+
+    res.status(500).json({
+      message: "Error creating article",
+      error: error.message, // ✅ SHOW REAL ERROR
+    });
   }
 };
 
@@ -64,6 +79,51 @@ exports.getAllArticles = async (req, res) => {
     res.status(200).json(articles);
   } catch (error) {
     res.status(500).json({ message: "Error fetching articles", error });
+  }
+};
+
+//
+// get by issues (archive)
+//
+exports.getArticlesByIssue = async (req, res) => {
+  try {
+    const { issueId } = req.params;
+
+    // Validate issue exists
+
+    const issue = await Issue.findById(issueId);
+    if (!issue) {
+      return res.status(404).json({
+        success: false,
+        message: "Issue not found",
+      });
+    }
+
+    // Fetch articles under this issue
+    const articles = await Article.find({ issueId })
+      .sort({ createdAt: -1 })
+      .select(
+        "articleId articleTitle authorName articleType articleStatus pageRange manuscriptFile publicationDate"
+      );
+
+    res.status(200).json({
+      success: true,
+      issue: {
+        year: issue.year,
+        volume: issue.volume,
+        issue: issue.issue,
+      },
+      totalArticles: articles.length,
+      articles,
+    });
+  } catch (error) {
+    console.error("GET ARTICLES BY ISSUE ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch articles",
+      error: error.message,
+    });
   }
 };
 

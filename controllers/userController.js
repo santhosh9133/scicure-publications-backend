@@ -1,4 +1,5 @@
 const User = require("../models/userModel");
+const Editor = require("../models/editorModel");
 const jwt = require("jsonwebtoken");
 
 // Generate JWT
@@ -152,23 +153,45 @@ exports.getWebUsers = async (req, res) => {
 };
 
 // Get Single User for Web (Public)
+
 exports.getWebUserById = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id, 
+    const { id } = req.params;
+
+    // 1️⃣ Get Journal (User)
+    const user = await User.findById(
+      id,
       "_id journalId journalName journalTitle journalISSN journalDescription journalImage status acronym"
     );
 
-    if (!user)
-      return res
-        .status(404)
-        .json({ success: false, message: "User not found" });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
 
+    // 2️⃣ Get Editors under this Journal
+    const editors = await Editor.find({ journalId: id })
+      .select("_id editorName email institution designation")
+      .sort({ createdAt: -1 });
+
+    // 3️⃣ Response
     return res.status(200).json({
       success: true,
-      data: user,
+      data: {
+        journal: user,
+        editors: editors,
+        totalEditors: editors.length,
+      },
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    console.error("GET WEB USER + EDITORS ERROR:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 

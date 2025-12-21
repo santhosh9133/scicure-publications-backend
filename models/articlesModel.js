@@ -75,17 +75,11 @@ const articleSchema = new mongoose.Schema(
     publicationDate: {
       type: Date,
     },
-
-    volumeNumber: {
-      type: String,
+    issueId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Issue",
       required: true,
     },
-
-    issueNumber: {
-      type: String,
-      required: true,
-    },
-
     pageRange: {
       type: String,
       // required: true,

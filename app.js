@@ -10,6 +10,7 @@ const articleRoutes = require("./routes/articleRoutes");
 const editorRoutes = require("./routes/editorRoutes");
 const menuscriptRoutes = require("./routes/menuscriptRoutes");
 const messageRoutes = require("./routes/messageRoutes");
+const issueRoutes = require("./routes/issueRoutes");
 
 let mongoose = require("./db/db");
 require("dotenv").config();
@@ -43,6 +44,7 @@ app.use("/api/articles", articleRoutes);
 app.use("/api/editors", editorRoutes);
 app.use("/api/manuscripts", menuscriptRoutes);
 app.use("/api/messages", messageRoutes);
+app.use("/api/issues", issueRoutes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -19,6 +19,7 @@ router.post(
 );
 router.get("/", verifyAdminToken, articleController.getAllArticles);
 router.get("/:id", verifyAdminToken, articleController.getArticleById);
+router.get("/issue/:issueId", articleController.getArticlesByIssue);
 router.put(
   "/:id",
   verifyAdminToken,
