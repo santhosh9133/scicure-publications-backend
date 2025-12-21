@@ -173,7 +173,7 @@ exports.getWebUserById = async (req, res) => {
 
     // 2️⃣ Get Editors under this Journal
     const editors = await Editor.find({ journalId: id })
-      .select("_id editorName email institution designation")
+      .select("_id editorName email country institution designation")
       .sort({ createdAt: -1 });
 
     // 3️⃣ Response

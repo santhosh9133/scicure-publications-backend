@@ -2,6 +2,11 @@ const mongoose = require("mongoose");
 
 const issueSchema = new mongoose.Schema(
   {
+    journalId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", // Assuming you already have a Journal model
+      required: true,
+    },
     year: {
       type: Number,
       required: true,

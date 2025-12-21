@@ -1,10 +1,21 @@
 const Issue = require("../models/issueModel");
+const Article = require("../models/articlesModel");
 
+// ===============================
+// CREATE ISSUE
+// ===============================
 exports.createIssue = async (req, res) => {
   try {
-    const { year, volume, issue } = req.body;
+    const { journalId, year, volume, issue } = req.body;
 
-    const newIssue = await Issue.create({ year, volume, issue });
+    if (!year || !volume || !issue) {
+      return res.status(400).json({
+        success: false,
+        message: "Year, Volume and Issue are required",
+      });
+    }
+
+    const newIssue = await Issue.create({ journalId, year, volume, issue });
 
     res.status(201).json({
       success: true,
@@ -15,9 +26,168 @@ exports.createIssue = async (req, res) => {
     if (error.code === 11000) {
       return res.status(400).json({
         success: false,
-        message: "This Volume & Issue already exists",
+        message: "This Volume & Issue already exists for the year",
       });
     }
-    res.status(500).json({ success: false, message: error.message });
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ===============================
+// GET ALL ISSUES
+// ===============================
+exports.getAllIssues = async (req, res) => {
+  try {
+    const issues = await Issue.find().sort({
+      year: -1,
+      volume: -1,
+      issue: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      total: issues.length,
+      issues,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ===============================
+// GET ISSUE BY ID
+// ===============================
+exports.getIssueById = async (req, res) => {
+  try {
+    const issue = await Issue.findById(req.params.id);
+
+    if (!issue) {
+      return res.status(404).json({
+        success: false,
+        message: "Issue not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      issue,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ===============================
+// UPDATE ISSUE
+// ===============================
+exports.updateIssue = async (req, res) => {
+  try {
+    const updatedIssue = await Issue.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+
+    if (!updatedIssue) {
+      return res.status(404).json({
+        success: false,
+        message: "Issue not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Issue updated successfully",
+      issue: updatedIssue,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ===============================
+// DELETE ISSUE (SAFE DELETE)
+// ===============================
+exports.deleteIssue = async (req, res) => {
+  try {
+    // ❗ Prevent deleting issue if articles exist
+    const articleCount = await Article.countDocuments({
+      issueId: req.params.id,
+    });
+
+    if (articleCount > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot delete issue with articles",
+      });
+    }
+
+    const deletedIssue = await Issue.findByIdAndDelete(req.params.id);
+
+    if (!deletedIssue) {
+      return res.status(404).json({
+        success: false,
+        message: "Issue not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Issue deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// ===============================
+// GET ARCHIVE ISSUES (YEAR → ISSUES)
+// ===============================
+exports.getArchiveIssues = async (req, res) => {
+  try {
+    const issues = await Issue.find()
+      .sort({ year: -1, volume: -1, issue: -1 })
+      .lean();
+
+    const archive = {};
+
+    issues.forEach((item) => {
+      if (!archive[item.year]) {
+        archive[item.year] = [];
+      }
+
+      archive[item.year].push({
+        _id: item._id,
+        volume: item.volume,
+        issue: item.issue,
+        publishedDate: item.publishedDate,
+      });
+    });
+
+    res.status(200).json({
+      success: true,
+      archive,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
