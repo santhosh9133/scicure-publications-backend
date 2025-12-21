@@ -8,7 +8,10 @@ const userController = require("../controllers/userController");
 // REGISTER
 router.post(
   "/register",
-  upload.single("profilePic"),
+  upload.fields([
+    { name: "journalImage", maxCount: 1 },
+    { name: "journalBgImage", maxCount: 1 },
+  ]),
   verifyAdminToken,
   userController.registerUser
 );

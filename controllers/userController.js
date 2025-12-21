@@ -97,7 +97,8 @@ exports.createUser = async (req, res) => {
       journalDescription,
     } = req.body;
 
-    const journalImage = req.file ? req.file.filename : "";
+    const journalImage = req.files?.journalImage?.[0]?.filename || "";
+    const journalBgImage = req.files?.journalBgImage?.[0]?.filename || "";
 
     const user = new User({
       userName,
@@ -110,6 +111,7 @@ exports.createUser = async (req, res) => {
       journalISSN,
       journalDescription,
       journalImage,
+      journalBgImage,
     });
 
     await user.save();
@@ -120,7 +122,11 @@ exports.createUser = async (req, res) => {
       data: user,
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    console.error("CREATE USER ERROR:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
@@ -226,8 +232,6 @@ exports.updateUser = async (req, res) => {
       password,
       mobile,
       role,
-      journalImage,
-      journalBgImage,
       journalName,
       journalTitle,
       journalISSN,
@@ -239,11 +243,8 @@ exports.updateUser = async (req, res) => {
     const updateData = {
       userName,
       email,
-      password,
       mobile,
       role,
-      journalImage,
-      journalBgImage,
       journalName,
       journalTitle,
       journalISSN,
@@ -252,9 +253,19 @@ exports.updateUser = async (req, res) => {
       status,
     };
 
-    if (req.file) {
-      updateData.journalImage = req.file.filename;
-      updateData.journalBgImage = req.file.filename;
+    // ✅ Handle journalImage
+    if (req.files?.journalImage?.length) {
+      updateData.journalImage = req.files.journalImage[0].filename;
+    }
+
+    // ✅ Handle journalBgImage
+    if (req.files?.journalBgImage?.length) {
+      updateData.journalBgImage = req.files.journalBgImage[0].filename;
+    }
+
+    // ✅ Optional: password update
+    if (password) {
+      updateData.password = password; // hash if required
     }
 
     const user = await User.findByIdAndUpdate(
@@ -263,10 +274,11 @@ exports.updateUser = async (req, res) => {
       { new: true }
     );
 
-    if (!user)
+    if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
+    }
 
     return res.status(200).json({
       success: true,
@@ -274,7 +286,11 @@ exports.updateUser = async (req, res) => {
       data: user,
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    console.error("UPDATE USER ERROR:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
