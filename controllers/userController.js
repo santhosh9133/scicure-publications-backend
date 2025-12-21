@@ -14,6 +14,7 @@ exports.registerUser = async (req, res) => {
   try {
     const { userName, email, password, mobile, role } = req.body;
     const journalImage = req.file ? `/uploads/${req.file.filename}` : "";
+    const journalBgImage = req.file ? `/uploads/${req.file.filename}` : "";
 
     const existingUser = await User.findOne({ email });
     if (existingUser)
@@ -26,6 +27,7 @@ exports.registerUser = async (req, res) => {
       mobile,
       role,
       journalImage,
+      journalBgImage,
     });
 
     await user.save();
@@ -39,6 +41,7 @@ exports.registerUser = async (req, res) => {
         userName: user.userName,
         email: user.email,
         journalImage: user.journalImage,
+        journalBgImage: user.journalBgImage,
         role: user.role,
         token,
       },
@@ -224,6 +227,7 @@ exports.updateUser = async (req, res) => {
       mobile,
       role,
       journalImage,
+      journalBgImage,
       journalName,
       journalTitle,
       journalISSN,
@@ -239,6 +243,7 @@ exports.updateUser = async (req, res) => {
       mobile,
       role,
       journalImage,
+      journalBgImage,
       journalName,
       journalTitle,
       journalISSN,
@@ -249,6 +254,7 @@ exports.updateUser = async (req, res) => {
 
     if (req.file) {
       updateData.journalImage = req.file.filename;
+      updateData.journalBgImage = req.file.filename;
     }
 
     const user = await User.findByIdAndUpdate(

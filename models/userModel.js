@@ -15,6 +15,7 @@ const userSchema = new Schema(
 
     // journal specific fields
     journalImage: { type: String, default: "" },
+    journalBgImage: { type: String, default: "" },
     journalName: { type: String, default: "" },
     journalTitle: { type: String, default: "" },
     journalISSN: { type: String, default: "" },

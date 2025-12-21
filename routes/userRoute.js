@@ -19,7 +19,10 @@ router.post("/login", userController.loginUser);
 // Create user (form-data + image upload)
 router.post(
   "/create",
-  upload.single("journalImage"),
+  upload.fields([
+    { name: "journalImage", maxCount: 1 },
+    { name: "journalBgImage", maxCount: 1 },
+  ]),
   verifyAdminToken,
   userController.createUser
 );
@@ -39,7 +42,10 @@ router.get("/:id", verifyAdminToken, userController.getUserById);
 // Update user (with optional new image)
 router.put(
   "/update/:id",
-  upload.single("journalImage"),
+  upload.fields([
+    { name: "journalImage", maxCount: 1 },
+    { name: "journalBgImage", maxCount: 1 },
+  ]),
   verifyAdminToken,
   userController.updateUser
 );
