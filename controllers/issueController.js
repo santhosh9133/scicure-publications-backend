@@ -164,7 +164,6 @@ exports.getArchiveIssuesByJournal = async (req, res) => {
   try {
     const { journalId } = req.params;
 
-    // Optional: validate ObjectId
     if (!mongoose.Types.ObjectId.isValid(journalId)) {
       return res.status(400).json({
         success: false,
@@ -176,20 +175,26 @@ exports.getArchiveIssuesByJournal = async (req, res) => {
       .sort({ year: -1, volume: -1, issue: -1 })
       .lean();
 
-    const archive = {};
+    const archiveMap = new Map();
 
     issues.forEach((item) => {
-      if (!archive[item.year]) {
-        archive[item.year] = [];
+      if (!archiveMap.has(item.year)) {
+        archiveMap.set(item.year, []);
       }
 
-      archive[item.year].push({
+      archiveMap.get(item.year).push({
         _id: item._id,
         volume: item.volume,
         issue: item.issue,
         publishedDate: item.publishedDate,
       });
     });
+
+    // Convert Map → Array (order preserved)
+    const archive = Array.from(archiveMap, ([year, issues]) => ({
+      year,
+      issues,
+    }));
 
     res.status(200).json({
       success: true,
