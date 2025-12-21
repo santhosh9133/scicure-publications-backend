@@ -7,7 +7,7 @@ const {
   getIssueById,
   updateIssue,
   deleteIssue,
-  getArchiveIssues,
+  getArchiveIssuesByJournal,
 } = require("../controllers/issueController");
 
 const { verifyAdminToken } = require("../middleware/verifyToken");
@@ -23,7 +23,7 @@ router.post("/", verifyAdminToken, createIssue);
 router.get("/", getAllIssues);
 
 // Get archive format (Year → Issues)
-router.get("/archive", getArchiveIssues);
+router.get("/archive/:journalId", getArchiveIssuesByJournal);
 
 // Get single issue by ID
 router.get("/:id", getIssueById);

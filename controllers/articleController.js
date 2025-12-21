@@ -1,6 +1,7 @@
 const Article = require("../models/articlesModel");
 const User = require("../models/userModel");
 const Issue = require("../models/issueModel");
+const mongoose = require("mongoose");
 
 exports.createArticle = async (req, res) => {
   try {
@@ -32,7 +33,7 @@ exports.createArticle = async (req, res) => {
 
     const newArticle = new Article({
       articleTitle: req.body.articleTitle,
-      journalId: req.body.journalId,
+      journalId: new mongoose.Types.ObjectId(req.body.journalId),
       authorName: req.body.authorName,
       authorEmail: req.body.authorEmail,
       articleType: req.body.articleType,
@@ -42,7 +43,7 @@ exports.createArticle = async (req, res) => {
       submissionDate: req.body.submissionDate,
       acceptanceDate: req.body.acceptanceDate,
       publicationDate: req.body.publicationDate,
-      issueId: issueId, // ✅ FIXED
+      issueId: new mongoose.Types.ObjectId(issueId),
       pageRange: req.body.pageRange,
       manuscriptFile,
       coverImage,
@@ -100,11 +101,7 @@ exports.getArticlesByIssue = async (req, res) => {
     }
 
     // Fetch articles under this issue
-    const articles = await Article.find({ issueId })
-      .sort({ createdAt: -1 })
-      .select(
-        "articleId articleTitle authorName articleType articleStatus pageRange manuscriptFile publicationDate"
-      );
+    const articles = await Article.find({ issueId }).sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,

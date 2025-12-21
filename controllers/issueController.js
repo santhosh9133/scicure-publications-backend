@@ -1,5 +1,6 @@
 const Issue = require("../models/issueModel");
 const Article = require("../models/articlesModel");
+const mongoose = require("mongoose");
 
 // ===============================
 // CREATE ISSUE
@@ -159,9 +160,19 @@ exports.deleteIssue = async (req, res) => {
 // ===============================
 // GET ARCHIVE ISSUES (YEAR → ISSUES)
 // ===============================
-exports.getArchiveIssues = async (req, res) => {
+exports.getArchiveIssuesByJournal = async (req, res) => {
   try {
-    const issues = await Issue.find()
+    const { journalId } = req.params;
+
+    // Optional: validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(journalId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid journalId",
+      });
+    }
+
+    const issues = await Issue.find({ journalId })
       .sort({ year: -1, volume: -1, issue: -1 })
       .lean();
 
@@ -182,6 +193,7 @@ exports.getArchiveIssues = async (req, res) => {
 
     res.status(200).json({
       success: true,
+      journalId,
       archive,
     });
   } catch (error) {
